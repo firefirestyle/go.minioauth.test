@@ -74,7 +74,19 @@ func GetFacebookHandlerObj(ctx context.Context) *facebook.FacebookHandler {
 				CallbackUrl:             "http://" + v + "" + UrlFacebookTokenCallback,
 				SecretSign:              "abc",
 			},
-			facebook.FacebookHundlerOnEvent{})
+			facebook.FacebookHundlerOnEvent{
+				OnRequest: func(http.ResponseWriter, *http.Request, *facebook.FacebookHandler) (map[string]string, error) {
+					return map[string]string{"test": "abcdef"}, nil
+				},
+				OnFoundUser: func(w http.ResponseWriter, r *http.Request, h *facebook.FacebookHandler, s *facebook.GetMeResponse, t *facebook.AccessTokenResponse) map[string]string {
+					return map[string]string{
+						"test":       r.URL.Query().Get("test"), //
+						"userId":     s.Id,                      //
+						"screenName": s.Name,
+						"token":      t.AccessToken,
+					}
+				},
+			})
 	}
 	return facebookHandlerObj
 }
