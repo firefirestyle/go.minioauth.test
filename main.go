@@ -43,7 +43,20 @@ func GetTwitterHandlerObj(ctx context.Context) *twitter.TwitterHandler {
 				SecretSign:        "abc",
 				CallbackUrl:       "http://" + appengine.DefaultVersionHostname(ctx) + "" + UrlTwitterTokenCallback,
 			},
-			twitter.TwitterHundlerOnEvent{})
+			twitter.TwitterHundlerOnEvent{
+				OnRequest: func(http.ResponseWriter, *http.Request, *twitter.TwitterHandler) (map[string]string, error) {
+					return map[string]string{"test": "abcdef"}, nil
+				},
+				OnFoundUser: func(w http.ResponseWriter, r *http.Request, h *twitter.TwitterHandler, s *twitter.SendAccessTokenResult) map[string]string {
+					return map[string]string{ //
+						"test":       r.URL.Query().Get("test"), //
+						"userId":     s.GetUserID(),             //
+						"screenName": s.GetScreenName(),
+						"token":      s.GetOAuthToken(),
+						"secret":     s.GetOAuthTokenSecret(),
+					}
+				},
+			})
 	}
 	return twitterHandlerObj
 }
