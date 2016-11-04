@@ -114,7 +114,7 @@ func initApi() {
 
 	http.HandleFunc(UrlFacebookTokenUrlRedirect, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Access-Control-Allow-Origin", "*")
-		GetFacebookHandlerObj(appengine.NewContext(r)).HandlerLoginEntry(w, r)
+		GetFacebookHandlerObj(appengine.NewContext(r)).HandleLoginEntry(w, r)
 	})
 	http.HandleFunc(UrlFacebookTokenCallback, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Access-Control-Allow-Origin", "*")
